@@ -1,5 +1,7 @@
 package tests;
 
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import lib.CoreTestCase;
 import lib.Platform;
 import org.junit.Assert;
@@ -10,11 +12,17 @@ import ui.factories.MyListsPageObjectFactory;
 import ui.factories.NavigationUIFactory;
 import ui.factories.SearchPageObjectFactory;
 
+@Epic("Tests for lists of articles")
 public class MyListsTests extends CoreTestCase {
     private static final String login = "alice99999999",
             password = "hf*eV]%Jc5rG4&r";
 
     @Test
+    @Features(value = {@Feature(value = "MyLists")})
+    @DisplayName("Save the first article to reading list")
+    @Description("The test finds and adds an article to the reading list, then goes to the created list and deletes it")
+    @Step("Starting test testSaveFirstArticleToMyList")
+    @Severity(value = SeverityLevel.CRITICAL)
     public void testSaveFirstArticleToMyList() {
         //mainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text, 'Skip')]"), "Невозможно найти элемент", 15);
         //mainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "Невозможно найти элемент", 15);
@@ -58,7 +66,7 @@ public class MyListsTests extends CoreTestCase {
             Auth.submitForm();
 
             articlePageObject.waitForTitleElement();
-            assertEquals("We are not on the same page after login",
+            Assert.assertEquals("We are not on the same page after login",
                     articleTitle,
                     articlePageObject.getArticleTitle());
         }
@@ -76,6 +84,11 @@ public class MyListsTests extends CoreTestCase {
     }
 
     @Test
+    @Features(value = {@Feature(value = "MyLists")})
+    @DisplayName("Saving two articles to reading list and delete one of them")
+    @Description("The test finds and adds two articles to the reading list, removing one of them from the reading list")
+    @Step("Starting test testSaveTwoArticlesAndDeleteOneOfThem")
+    @Severity(value = SeverityLevel.NORMAL)
     public void testSaveTwoArticlesAndDeleteOneOfThem() {
         //mainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text, 'Skip')]"), "Невозможно найти элемент", 15);
         //поиск первой
@@ -141,7 +154,7 @@ public class MyListsTests extends CoreTestCase {
             Auth.submitForm();
 
             articlePageObject.waitForTitleElement();
-            assertEquals("We are not on the same page after login",
+            Assert.assertEquals("We are not on the same page after login",
                     firstArticleTitle,
                     articlePageObject.getArticleTitle());
         }

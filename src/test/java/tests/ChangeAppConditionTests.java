@@ -1,7 +1,10 @@
 package tests;
 
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import lib.CoreTestCase;
 import lib.Platform;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import ui.ArticlePageObject;
@@ -9,8 +12,14 @@ import ui.SearchPageObject;
 import ui.factories.ArticlePageObjectFactory;
 import ui.factories.SearchPageObjectFactory;
 
+@Epic("Change app condition tests")
 public class ChangeAppConditionTests extends CoreTestCase {
     @Test
+    @Features(value = {@Feature(value="Search"),@Feature(value = "Article")})
+    @DisplayName("Change screen orientation on search results")
+    @Description("The test checks the display of the article title by change orientation on the screen")
+    @Step("Starting test testChangeScreenOrientationOnSearchResults")
+    @Severity(value = SeverityLevel.MINOR)
     public void testChangeScreenOrientationOnSearchResults() {
         //String searchLine = "Java";
         //String articleTitle = "Java (programming language)";
@@ -45,14 +54,19 @@ public class ChangeAppConditionTests extends CoreTestCase {
         WebElement titleBeforeLandscapeRotation = articlePageObject.waitForArticleTitleElement(articleTitle);
         this.rotateLandscape();
         WebElement titleAfterLandscapeRotation = articlePageObject.waitForArticleTitleElement(articleTitle);
-        assertEquals("Article title have been changed after screen rotation", titleBeforeLandscapeRotation, titleAfterLandscapeRotation);
+        Assert.assertEquals("Article title have been changed after screen rotation", titleBeforeLandscapeRotation, titleAfterLandscapeRotation);
         this.rotatePortrait();
         WebElement titleAfterSecondRotation = articlePageObject.waitForArticleTitleElement(articleTitle);
-        assertEquals("Article title have been changed after screen rotation", titleBeforeLandscapeRotation, titleAfterSecondRotation);
+        Assert.assertEquals("Article title have been changed after screen rotation", titleBeforeLandscapeRotation, titleAfterSecondRotation);
     }
 
 
     @Test
+    @Features(value = {@Feature(value="Search"),@Feature(value = "Article")})
+    @DisplayName("Change search article in background")
+    @Description("The test checks the display of the article title by minimizing and expanding the application")
+    @Step("Starting test testSearchArticleInBackground")
+    @Severity(value = SeverityLevel.MINOR)
     public void testChangeSearchArticleInBackground() {
         //String searchLine = "Java";
         //String articleTitle = "Java (programming language)";

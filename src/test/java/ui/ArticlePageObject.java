@@ -1,9 +1,8 @@
 package ui;
 
-import io.appium.java_client.AppiumDriver;
+import io.qameta.allure.Step;
 import lib.Platform;
 import org.junit.Assert;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -45,17 +44,21 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
     /* TEMPLATES METHODS */
 
+    @Step("Wait for the title to display")
     public WebElement waitForTitleElement() {
         return this.waitForElementPresent(TITLE, "Cannot find article title on page", 15);
     }
 
+    @Step("Wait for the title to display")
     public WebElement waitForArticleTitleElement(String article_title) {
         String searchResultXpath = getTitle(article_title);
         return this.waitForElementPresent(searchResultXpath, "Cannot find article title on page", 15);
     }
 
+    @Step("Get article title text")
     public String getArticleTitle() {
         WebElement titleElement = waitForTitleElement();
+        screenshot(this.takeScreenshot("article_title"));
         if (Platform.getInstance().isAndroid())
             return titleElement.getAttribute("text");
         else return titleElement.getText();
@@ -68,6 +71,8 @@ abstract public class ArticlePageObject extends MainPageObject {
         //Assert.assertEquals(err_msg, text, articleTitle);
     }
 
+
+    @Step("Make sure the element has a title")
     public void assertElementHasTextByXpath(String expectedText, String err_msg) {
         String actualText = waitForArticleTitleElement(expectedText).getText();
         Assert.assertEquals(
@@ -76,6 +81,7 @@ abstract public class ArticlePageObject extends MainPageObject {
                 actualText);
     }
 
+    @Step("Swipe to footer")
     public void swipeToFooter() {
         if (Platform.getInstance().isAndroid()) {
             this.swipeUpToFindElement(
@@ -88,6 +94,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         }
     }
 
+    @Step("Add article to new list")
     public void addArticleToMyNewList(String nameOfFolder) {
         this.waitForElementAndClick(SAVE_BUTTON, "Cannot find button 'Save'", 5);
 
@@ -98,10 +105,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         this.waitForElementAndClick(MY_LIST_OK_BUTTON, "Cannot press 'OK' button", 15);
     }
 
-    public void addArticleToList() {
-        this.waitForElementAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find button 'Add to list'", 5);
-    }
-
+    @Step("Add article to saved (for Mobile)")
     public void addArticlesToMySaved() {
         if (Platform.getInstance().isMw()) {
             sleep(2000);
@@ -114,6 +118,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         );
     }
 
+    @Step("Remove article from saved if it added")
     public void removeArticleFromSavedIfItAdded() {
         sleep(2000);
         if (this.isElementPresent(OPTIONS_REMOVE_FROM_MYLISTS_BUTTON)) {
@@ -131,6 +136,7 @@ abstract public class ArticlePageObject extends MainPageObject {
         return element.getText();
     }
 
+    @Step("Add article to old list")
     public void addArticleToMyOldList() {
         this.waitForElementAndClick(SAVE_BUTTON, "Cannot find button 'Save'", 5);
         this.waitForElementAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find button 'Add to list'", 5);

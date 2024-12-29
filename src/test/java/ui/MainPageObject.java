@@ -2,16 +2,22 @@ package ui;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
+import io.qameta.allure.Attachment;
 import lib.Platform;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 
 public class MainPageObject {
@@ -110,10 +116,16 @@ public class MainPageObject {
             int middle_y = (upper_y + lower_y) / 2;
 
             TouchAction action = new TouchAction((AppiumDriver) driver);
-            action.press(right_x, middle_y)
-                    .waitAction(300)
-                    .moveTo(left_x, middle_y)
-                    .release()
+            action.press(PointOption.point(right_x, middle_y));
+            action.waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)));
+            if (Platform.getInstance().isAndroid()) {
+
+                action.moveTo(PointOption.point(left_x, middle_y));
+            } else {
+                int offset_x = (-1 * element.getSize().getWidth());
+                action.moveTo(PointOption.point(offset_x, 0));
+            }
+                    action.release()
                     .perform();
         } else {
             System.out.println("Method swipeToTheLeftElement() does nothing for platform " + Platform.getInstance().getPlatformVar());
@@ -128,7 +140,11 @@ public class MainPageObject {
             int x = size.width / 2;
             int start_y = (int) (size.height * 0.8);
             int end_y = (int) (size.height * 0.2);
-            action.press(x, start_y).waitAction(timeOfSwipe).moveTo(x, end_y).release().perform();
+            action.press(PointOption.point(x, start_y))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(timeOfSwipe)))
+                    .moveTo(PointOption.point(x, end_y))
+                    .release()
+                    .perform();
         } else {
             System.out.println("Method swipeUp() does nothing for platform " + Platform.getInstance().getPlatformVar());
         }
@@ -241,5 +257,31 @@ public class MainPageObject {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public String takeScreenshot(String name) {
+        TakesScreenshot ts = (TakesScreenshot) this.driver;
+        File source = ts.getScreenshotAs(OutputType.FILE);
+        String path = System.getProperty("user.dir") + "/" + name + "_screenshot.png";
+
+        try {
+            FileUtils.copyFile(source, new File(path));
+            System.out.println("The screenshot was taken" + path);
+        } catch (Exception e) {
+            System.out.println("Cannot take screenshot. Error " + e.getMessage());
+        }
+        return path;
+    }
+
+    @Attachment
+    public static byte[] screenshot(String path) {
+        byte[] bytes = new byte[0];
+
+        try {
+            bytes = Files.readAllBytes(Paths.get(path));
+        } catch (IOException e) {
+            System.out.println("Cannot get bytes from screenshot. Error: " + e.getMessage());
+        }
+        return bytes;
     }
 }
